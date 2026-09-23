@@ -37,8 +37,12 @@ directly in `tests/nlToSqlHandler.test.ts` by simulating exactly that scenario.
   always structured data, never free text that needs fragile parsing.
 - `src/nlToSqlHandler.ts` — ties it together: validate request → call Gemini → safety-gate the
   result → return. Framework-independent, directly unit tested.
-- `api/nl-to-sql.ts` — the actual Vercel serverless function; a thin adapter (CORS headers,
-  request/response translation) over `nlToSqlHandler.ts`. All real logic lives in `src/`.
+- `src/rateLimiter.ts` — the rate-limiting logic itself (fixed-window counter), framework- and
+  storage-independent, directly unit tested with an in-memory fake.
+- `src/rateLimitClient.ts` — builds the real Upstash Redis client from environment variables (or
+  returns `null` if they're not set).
+- `api/nl-to-sql.ts` — the actual Vercel serverless function; a thin adapter (CORS headers, rate
+  limiting, request/response translation) over `nlToSqlHandler.ts`. All real logic lives in `src/`.
 
 ## Environment variables (set these in Vercel → Settings → Environment Variables)
 
@@ -50,6 +54,23 @@ directly in `tests/nlToSqlHandler.test.ts` by simulating exactly that scenario.
   since your frontend is a static site, whatever value it sends is visible to anyone who inspects
   its network requests. Leave it unset to skip this check entirely; set it if you want a minor
   deterrent against random bots hitting the endpoint.
+- **`UPSTASH_REDIS_REST_URL`** and **`UPSTASH_REDIS_REST_TOKEN`** (optional, but recommended for
+  any public deployment) — credentials for a free [Upstash Redis](https://upstash.com/) database.
+  When both are set, requests are rate-limited per IP address (20 requests per 10 minutes by
+  default). This is the actual protection for your Gemini free-tier quota — the `x-app-key` check
+  above is not real security. Leave both unset to skip rate limiting entirely (the endpoint
+  behaves exactly as before). If Upstash itself is unreachable or errors, the endpoint **fails
+  open** — it allows the request through rather than going down — so a rate-limiter outage never
+  takes the whole endpoint with it.
+- **`RATE_LIMIT_MAX`** (optional, default `20`) and **`RATE_LIMIT_WINDOW_SECONDS`** (optional,
+  default `600`) — tune the rate limit. Only takes effect when the two Upstash variables above are
+  also set.
+
+### Setting up Upstash (2 minutes, free tier)
+
+1. Create a free database at [upstash.com](https://upstash.com/) (Redis → Create Database).
+2. Copy the **REST URL** and **REST Token** shown on the database's page.
+3. Add them to Vercel as `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`, then redeploy.
 
 ## Running the tests locally
 
@@ -59,10 +80,10 @@ npm run typecheck
 npm test
 ```
 
-16 tests, all pure/unit (no real API calls — Gemini's response is simulated), covering: normal
-question → SQL generation, the model declining with its own error message, request validation,
-Gemini API failures, and — the most important one — a simulated malicious/misbehaving model
-response being caught and never forwarded.
+22 tests, all pure/unit (no real API or Redis calls — Gemini's response and the rate-limit store
+are both simulated), covering: normal question → SQL generation, the model declining with its own
+error message, request validation, Gemini API failures, a simulated malicious/misbehaving model
+response being caught and never forwarded, and the rate limiter's window/counting behavior.
 
 ## Deploying
 
@@ -83,6 +104,6 @@ and run the returned SQL locally.
   handled and forgotten.
 - No execution of SQL on this backend at all — it only *generates* the query text. Execution
   happens entirely client-side against the user's own loaded data.
-- No real rate limiting yet. If you make this endpoint's URL public, anyone who finds it could
-  send it requests and consume your Gemini API free-tier quota. Fine for a demo/personal project;
-  worth adding a proper rate limiter (e.g. Upstash Redis, keyed on IP) before wider use.
+- Rate limiting is opt-in, not automatic. Set up Upstash (above) before making the endpoint's URL
+  public — without it, anyone who finds the URL could send it requests and consume your Gemini API
+  free-tier quota.

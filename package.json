@@ -8,6 +8,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@upstash/redis": "^1.39.0",
     "zod": "^4.1.5"
   },
   "devDependencies": {

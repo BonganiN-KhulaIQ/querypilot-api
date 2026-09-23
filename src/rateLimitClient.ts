@@ -1,5 +1,5 @@
 import { Redis } from "@upstash/redis";
-import type { RedisLike } from "./rateLimiter";
+import type { RedisLike } from "./rateLimiter.js";
 
 /**
  * Builds a Redis client from environment variables, or returns null if

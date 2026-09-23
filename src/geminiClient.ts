@@ -1,5 +1,5 @@
-import { SYSTEM_PROMPT, buildUserPrompt } from "./promptBuilder";
-import type { TableSchema } from "./types";
+import { SYSTEM_PROMPT, buildUserPrompt } from "./promptBuilder.js";
+import type { TableSchema } from "./types.js";
 
 // gemini-2.5-flash: a stable, well-documented model with a genuine free
 // tier via Google AI Studio (console.aistudio.google.com or

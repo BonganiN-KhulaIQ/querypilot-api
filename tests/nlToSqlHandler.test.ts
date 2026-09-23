@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { handleNlToSqlRequest, BadRequestError } from "../src/nlToSqlHandler";
+import { handleNlToSqlRequest, BadRequestError } from "../src/nlToSqlHandler.js";
 
 const SAMPLE_SCHEMA = {
   table: "orders",

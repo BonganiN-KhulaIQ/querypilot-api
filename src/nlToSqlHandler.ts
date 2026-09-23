@@ -1,6 +1,6 @@
-import { NlToSqlRequestSchema, type NlToSqlResult } from "./types";
-import { callGeminiForSql, GeminiClientError } from "./geminiClient";
-import { validateSelectOnlySql } from "./sqlSafety";
+import { NlToSqlRequestSchema, type NlToSqlResult } from "./types.js";
+import { callGeminiForSql, GeminiClientError } from "./geminiClient.js";
+import { validateSelectOnlySql } from "./sqlSafety.js";
 
 export class BadRequestError extends Error {}
 

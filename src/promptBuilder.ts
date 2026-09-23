@@ -1,4 +1,4 @@
-import type { TableSchema } from "./types";
+import type { TableSchema } from "./types.js";
 
 export const SYSTEM_PROMPT = `You translate a business user's plain-English question into a single SQLite SELECT statement, given a table's structure.
 

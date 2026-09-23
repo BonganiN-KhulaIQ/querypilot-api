@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { handleNlToSqlRequest, BadRequestError } from "../src/nlToSqlHandler";
-import { checkRateLimit, type RateLimitConfig } from "../src/rateLimiter";
-import { getRedisClientFromEnv } from "../src/rateLimitClient";
+import { handleNlToSqlRequest, BadRequestError } from "../src/nlToSqlHandler.js";
+import { checkRateLimit, type RateLimitConfig } from "../src/rateLimiter.js";
+import { getRedisClientFromEnv } from "../src/rateLimitClient.js";
 
 /**
  * POST /api/nl-to-sql — thin HTTP adapter only. All real logic lives in

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkRateLimit, type RedisLike } from "../src/rateLimiter";
+import { checkRateLimit, type RedisLike } from "../src/rateLimiter.js";
 
 /** In-memory fake standing in for Upstash Redis, so no network call happens in tests. */
 class FakeRedis implements RedisLike {

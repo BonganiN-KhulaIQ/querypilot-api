@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateSelectOnlySql } from "../src/sqlSafety";
+import { validateSelectOnlySql } from "../src/sqlSafety.js";
 
 describe("validateSelectOnlySql", () => {
   it("allows a plain SELECT statement", () => {

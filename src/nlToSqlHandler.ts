@@ -27,6 +27,10 @@ export async function handleNlToSqlRequest(
     modelOutput = await callGeminiForSql(apiKey, schema, question, fetchImpl);
   } catch (err) {
     if (err instanceof GeminiClientError) {
+      // Logged server-side only (visible in Vercel's function logs) — the
+      // client always gets the generic message below, never this detail,
+      // since it can include Gemini's raw error body.
+      console.error("Gemini call failed:", err.message);
       return { ok: false, error: "Couldn't generate a query right now. Please try again." };
     }
     throw err;

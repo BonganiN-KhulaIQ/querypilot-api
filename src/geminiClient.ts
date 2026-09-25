@@ -64,7 +64,15 @@ export async function callGeminiForSql(
   });
 
   if (!response.ok) {
-    throw new GeminiClientError(`Gemini API request failed with status ${response.status}`);
+    // Include Gemini's own error body (truncated) so the real cause — bad
+    // API key, wrong model name, quota exhausted, etc. — is visible in
+    // server-side logs. Never sent to the client: only this Error's
+    // message is logged server-side; handleNlToSqlRequest always returns
+    // a generic, safe message to the caller.
+    const bodyText = await response.text().catch(() => "");
+    throw new GeminiClientError(
+      `Gemini API request failed with status ${response.status}: ${bodyText.slice(0, 500)}`,
+    );
   }
 
   const data = (await response.json()) as {

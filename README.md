@@ -8,7 +8,7 @@ still runs entirely in the browser, against the user's own data, via sql.js — 
 sees or touches the user's real data rows, only the table's column structure and the English
 question.
 
-Uses Google's Gemini API (`gemini-2.5-flash`), chosen specifically because Google AI Studio offers
+Uses Google's Gemini API (`gemini-3.8-flash`), chosen specifically because Google AI Studio offers
 a genuine free tier — no card required to start, unlike Anthropic's API.
 
 ## How it works

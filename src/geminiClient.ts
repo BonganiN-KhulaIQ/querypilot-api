@@ -1,12 +1,13 @@
 import { SYSTEM_PROMPT, buildUserPrompt } from "./promptBuilder.js";
 import type { TableSchema } from "./types.js";
 
-// gemini-2.5-flash: a stable, well-documented model with a genuine free
-// tier via Google AI Studio (console.aistudio.google.com or
-// generativelanguage.googleapis.com directly). If a newer/cheaper
-// free-tier model is available by the time you read this, you can swap
-// this constant — nothing else here needs to change.
-const MODEL = "gemini-2.5-flash";
+// gemini-3.8-flash: Google retired gemini-2.5-flash for new users (returns
+// a 404 telling you to switch), and this is what it points to as of this
+// writing. Still reachable via the same v1beta generateContent endpoint
+// with function calling, so no other code here needed to change. If a
+// newer/cheaper free-tier model is available by the time you read this,
+// you can swap this constant — nothing else here needs to change.
+const MODEL = "gemini-3.8-flash";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 const RESPOND_WITH_SQL_FUNCTION = {
